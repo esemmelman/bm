@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>B'nai Mitzvah Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Planning workspace</p>
+      <h1>B'nai Mitzvah Tracker</h1>
+    </div>
+    <span id="connectionStatus" class="status" data-state="loading">Connecting...</span>
+  </header>
+
+  <main class="app-shell">
+    <aside class="tree-panel" aria-label="Tracker tree">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Families</p>
+          <h2>Tracker</h2>
+        </div>
+        <button id="newRootButton" class="icon-button" type="button" aria-label="Add a root item" title="Add a root item">+</button>
+      </div>
+      <form id="rootForm" class="quick-form" hidden>
+        <label for="rootName">New root item</label>
+        <div class="form-row">
+          <input id="rootName" maxlength="100" autocomplete="off" placeholder="Name or family" required>
+          <button type="submit">Add</button>
+        </div>
+        <button id="cancelRootButton" class="text-button" type="button">Cancel</button>
+      </form>
+      <nav id="tree" class="tree" aria-label="B'nai Mitzvah records"></nav>
+      <p id="emptyTree" class="empty-note">Select + to create your first item. A Log will be added beneath it automatically.</p>
+    </aside>
+
+    <section class="content-panel">
+      <div id="welcome" class="welcome">
+        <p class="eyebrow">Welcome</p>
+        <h2>Keep every conversation in one place.</h2>
+        <p>Create a root item on the left. Its dated Log will appear here.</p>
+      </div>
+
+      <div id="logView" hidden>
+        <div class="content-heading">
+          <div>
+            <p class="eyebrow">Activity log</p>
+            <h2 id="selectedTitle"></h2>
+          </div>
+        </div>
+
+        <form id="logForm" class="log-form">
+          <label for="logEntry">Add a log entry</label>
+          <textarea id="logEntry" rows="4" maxlength="5000" placeholder="Write a note, update, or next step..." required></textarea>
+          <div class="log-actions">
+            <span id="formMessage" role="status"></span>
+            <button type="submit">Save entry</button>
+          </div>
+        </form>
+
+        <div class="entries-heading">
+          <h3>Entries</h3>
+          <span id="entryCount"></span>
+        </div>
+        <div id="entries" class="entries"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
