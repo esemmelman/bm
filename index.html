@@ -66,6 +66,31 @@
         </div>
         <div id="entries" class="entries"></div>
       </div>
+
+      <div id="assignmentView" hidden>
+        <div class="content-heading">
+          <div>
+            <p class="eyebrow">Assignment</p>
+            <h2 id="assignmentTitle"></h2>
+            <p id="assignmentRootName" class="section-note"></p>
+          </div>
+        </div>
+
+        <form id="taskForm" class="task-form">
+          <label for="taskName">Add a task</label>
+          <div class="form-row">
+            <input id="taskName" maxlength="200" autocomplete="off" placeholder="Task name" required>
+            <button type="submit">Add task</button>
+          </div>
+          <span id="taskFormMessage" role="status"></span>
+        </form>
+
+        <div class="entries-heading">
+          <h3>Tasks</h3>
+          <span id="taskCount"></span>
+        </div>
+        <div id="tasks" class="tasks"></div>
+      </div>
     </section>
   </main>
 

@@ -21,9 +21,20 @@ const logEntry = document.getElementById('logEntry');
 const formMessage = document.getElementById('formMessage');
 const entries = document.getElementById('entries');
 const entryCount = document.getElementById('entryCount');
+const assignmentView = document.getElementById('assignmentView');
+const assignmentTitle = document.getElementById('assignmentTitle');
+const assignmentRootName = document.getElementById('assignmentRootName');
+const taskForm = document.getElementById('taskForm');
+const taskName = document.getElementById('taskName');
+const taskFormMessage = document.getElementById('taskFormMessage');
+const tasksElement = document.getElementById('tasks');
+const taskCount = document.getElementById('taskCount');
 
 let roots = [];
+let assignments = [];
+let tasks = [];
 let selectedRootId = null;
+let selectedAssignmentId = null;
 const expandedRootIds = new Set();
 
 function setStatus(message, state) {
@@ -56,7 +67,8 @@ function renderTree() {
     rootButton.type = 'button';
     rootButton.className = 'tree-item';
     rootButton.setAttribute('aria-expanded', String(expandedRootIds.has(root.id)));
-    rootButton.setAttribute('aria-current', String(root.id === selectedRootId));
+    rootButton.setAttribute('aria-current', String(root.id === selectedRootId && !selectedAssignmentId));
+    rootButton.title = 'Click to expand or collapse. Right-click to add an assignment.';
 
     const chevron = document.createElement('span');
     chevron.className = 'tree-chevron';
@@ -74,18 +86,59 @@ function renderTree() {
       }
       renderTree();
     };
+    rootButton.oncontextmenu = event => {
+      event.preventDefault();
+      createAssignment(root);
+    };
 
     const logButton = document.createElement('button');
     logButton.type = 'button';
     logButton.className = 'tree-item tree-child';
     logButton.textContent = 'Log';
-    logButton.setAttribute('aria-current', String(root.id === selectedRootId));
+    logButton.setAttribute('aria-current', String(root.id === selectedRootId && !selectedAssignmentId));
     logButton.hidden = !expandedRootIds.has(root.id);
     logButton.onclick = () => selectRoot(root.id);
 
     group.append(rootButton, logButton);
+    assignments
+      .filter(assignment => assignment.parent_id === root.id)
+      .forEach(assignment => {
+        const assignmentButton = document.createElement('button');
+        assignmentButton.type = 'button';
+        assignmentButton.className = 'tree-item tree-child assignment-node';
+        assignmentButton.textContent = assignment.name;
+        assignmentButton.hidden = !expandedRootIds.has(root.id);
+        assignmentButton.setAttribute('aria-current', String(assignment.id === selectedAssignmentId));
+        assignmentButton.onclick = () => selectAssignment(assignment.id);
+        group.append(assignmentButton);
+      });
     tree.append(group);
   });
+}
+
+async function createAssignment(root) {
+  const value = prompt(`Name the assignment for ${root.name}:`);
+  if (value === null) return;
+  const name = value.trim();
+  if (!name) {
+    alert('Enter a name for the assignment.');
+    return;
+  }
+
+  const { data, error } = await db
+    .from('bm_nodes')
+    .insert({ name, parent_id: root.id, node_type: 'assignment' })
+    .select('id, name, parent_id, node_type, created_at')
+    .single();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  assignments.push(data);
+  expandedRootIds.add(root.id);
+  selectAssignment(data.id);
 }
 
 async function loadRoots() {
@@ -96,8 +149,7 @@ async function loadRoots() {
 
   const { data, error } = await db
     .from('bm_nodes')
-    .select('id, name, created_at')
-    .is('parent_id', null)
+    .select('id, name, parent_id, node_type, created_at')
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -106,7 +158,9 @@ async function loadRoots() {
     return;
   }
 
-  roots = data;
+  roots = data.filter(node => node.parent_id === null);
+  assignments = data.filter(node => node.node_type === 'assignment');
+  tasks = data.filter(node => node.node_type === 'task');
   roots.forEach(root => expandedRootIds.add(root.id));
   setStatus('Connected', 'ready');
   renderTree();
@@ -114,12 +168,14 @@ async function loadRoots() {
 
 async function selectRoot(id) {
   selectedRootId = id;
+  selectedAssignmentId = null;
   const root = roots.find(item => item.id === id);
   if (!root) return;
 
   renderTree();
   welcome.hidden = true;
   logView.hidden = false;
+  assignmentView.hidden = true;
   selectedTitle.textContent = root.name;
   entries.innerHTML = '<p class="no-entries">Loading entries...</p>';
 
@@ -137,6 +193,49 @@ async function selectRoot(id) {
   }
 
   renderEntries(data);
+}
+
+function selectAssignment(id) {
+  const assignment = assignments.find(item => item.id === id);
+  if (!assignment) return;
+  const root = roots.find(item => item.id === assignment.parent_id);
+
+  selectedAssignmentId = id;
+  selectedRootId = assignment.parent_id;
+  welcome.hidden = true;
+  logView.hidden = true;
+  assignmentView.hidden = false;
+  assignmentTitle.textContent = assignment.name;
+  assignmentRootName.textContent = root ? root.name : '';
+  taskFormMessage.textContent = '';
+  renderTasks();
+  renderTree();
+}
+
+function renderTasks() {
+  const assignmentTasks = tasks.filter(task => task.parent_id === selectedAssignmentId);
+  tasksElement.replaceChildren();
+  taskCount.textContent = `${assignmentTasks.length} ${assignmentTasks.length === 1 ? 'task' : 'tasks'}`;
+
+  if (!assignmentTasks.length) {
+    const empty = document.createElement('p');
+    empty.className = 'no-entries';
+    empty.textContent = 'No tasks yet. Add the first task above.';
+    tasksElement.append(empty);
+    return;
+  }
+
+  assignmentTasks.forEach(task => {
+    const item = document.createElement('div');
+    item.className = 'task-item';
+    const marker = document.createElement('span');
+    marker.className = 'task-marker';
+    marker.setAttribute('aria-hidden', 'true');
+    const label = document.createElement('span');
+    label.textContent = task.name;
+    item.append(marker, label);
+    tasksElement.append(item);
+  });
 }
 
 function renderEntries(items) {
@@ -238,6 +337,34 @@ logForm.onsubmit = async event => {
   formMessage.textContent = 'Saved';
   await selectRoot(selectedRootId);
   logEntry.focus();
+};
+
+taskForm.onsubmit = async event => {
+  event.preventDefault();
+  const name = taskName.value.trim();
+  if (!name || !selectedAssignmentId || !db) return;
+
+  const submitButton = taskForm.querySelector('[type="submit"]');
+  submitButton.disabled = true;
+  taskFormMessage.textContent = 'Saving...';
+
+  const { data, error } = await db
+    .from('bm_nodes')
+    .insert({ name, parent_id: selectedAssignmentId, node_type: 'task' })
+    .select('id, name, parent_id, node_type, created_at')
+    .single();
+
+  submitButton.disabled = false;
+  if (error) {
+    taskFormMessage.textContent = error.message;
+    return;
+  }
+
+  tasks.push(data);
+  taskForm.reset();
+  taskFormMessage.textContent = 'Saved';
+  renderTasks();
+  taskName.focus();
 };
 
 loadRoots();

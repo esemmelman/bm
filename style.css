@@ -73,12 +73,12 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: clamp(1.45rem, 2.
   line-height: 1;
 }
 
-.quick-form, .log-form { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: var(--shadow); }
+.quick-form, .log-form, .task-form { padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: var(--shadow); }
 .quick-form { margin-bottom: 18px; }
-.quick-form label, .log-form label { display: block; margin-bottom: 8px; font-weight: 750; }
+.quick-form label, .log-form label, .task-form label { display: block; margin-bottom: 8px; font-weight: 750; }
 .form-row input, textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); }
 .form-row input { min-width: 0; height: 42px; padding: 0 11px; }
-.form-row button, .log-form button { border: 0; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 750; }
+.form-row button, .log-form button, .task-form button { border: 0; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 750; }
 .form-row button { height: 42px; padding: 0 16px; }
 .text-button { margin-top: 9px; padding: 0; border: 0; background: transparent; color: var(--accent-dark); }
 
@@ -91,14 +91,20 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: clamp(1.45rem, 2.
 .tree-item[aria-expanded="true"] .tree-chevron { transform: rotate(90deg); }
 .tree-child { position: relative; margin-left: 22px; padding-left: 31px; font-weight: 600; color: var(--muted); }
 .tree-child::before { content: ""; position: absolute; left: 8px; top: -8px; width: 13px; height: 28px; border-left: 1px solid #aaa69d; border-bottom: 1px solid #aaa69d; border-radius: 0 0 0 8px; }
+.assignment-node { color: var(--accent-dark); }
 .empty-note { color: var(--muted); line-height: 1.55; }
 
 .welcome { max-width: 650px; margin-top: 12vh; }
 .welcome h2 { margin-bottom: 14px; font-size: clamp(2rem, 5vw, 4.2rem); line-height: 1.02; }
 .welcome > p:last-child { color: var(--muted); font-size: 1.08rem; }
-#logView { max-width: 880px; margin: 0 auto; }
+#logView, #assignmentView { max-width: 880px; margin: 0 auto; }
 .content-heading { margin-bottom: 28px; }
+.section-note { margin: 7px 0 0; color: var(--muted); }
 .log-form { padding: clamp(18px, 3vw, 28px); }
+.task-form { padding: clamp(18px, 3vw, 28px); }
+.task-form .form-row { align-items: stretch; }
+.task-form .form-row button { min-width: 105px; }
+#taskFormMessage { display: block; min-height: 1.2em; margin-top: 10px; color: var(--muted); font-size: .88rem; }
 textarea { display: block; min-height: 120px; resize: vertical; padding: 13px; line-height: 1.5; }
 .log-actions { margin-top: 13px; }
 .log-actions button { min-height: 44px; padding: 0 20px; }
@@ -111,6 +117,9 @@ textarea { display: block; min-height: 120px; resize: vertical; padding: 13px; l
 .entry time { display: block; margin-bottom: 8px; color: var(--accent-dark); font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .entry p { margin-bottom: 0; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 .no-entries { padding: 38px 0; color: var(--muted); text-align: center; }
+.tasks { display: grid; }
+.task-item { display: flex; align-items: flex-start; gap: 12px; padding: 18px 4px; border-bottom: 1px solid var(--line); line-height: 1.5; }
+.task-marker { flex: 0 0 auto; width: 12px; height: 12px; margin-top: 5px; border: 2px solid var(--accent); border-radius: 3px; }
 
 @media (max-width: 720px) {
   .app-header { min-height: 78px; padding: 14px 18px; }
