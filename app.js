@@ -29,12 +29,16 @@ const taskName = document.getElementById('taskName');
 const taskFormMessage = document.getElementById('taskFormMessage');
 const tasksElement = document.getElementById('tasks');
 const taskCount = document.getElementById('taskCount');
+const rootContextMenu = document.getElementById('rootContextMenu');
+const addAssignmentAction = document.getElementById('addAssignmentAction');
+const deleteRootAction = document.getElementById('deleteRootAction');
 
 let roots = [];
 let assignments = [];
 let tasks = [];
 let selectedRootId = null;
 let selectedAssignmentId = null;
+let contextRootId = null;
 const expandedRootIds = new Set();
 
 function setStatus(message, state) {
@@ -88,7 +92,7 @@ function renderTree() {
     };
     rootButton.oncontextmenu = event => {
       event.preventDefault();
-      createAssignment(root);
+      openRootContextMenu(event, root.id);
     };
 
     const logButton = document.createElement('button');
@@ -116,6 +120,22 @@ function renderTree() {
   });
 }
 
+function openRootContextMenu(event, rootId) {
+  contextRootId = rootId;
+  rootContextMenu.hidden = false;
+
+  const menuWidth = 190;
+  const menuHeight = 96;
+  rootContextMenu.style.left = `${Math.min(event.clientX, window.innerWidth - menuWidth - 8)}px`;
+  rootContextMenu.style.top = `${Math.min(event.clientY, window.innerHeight - menuHeight - 8)}px`;
+  addAssignmentAction.focus();
+}
+
+function closeRootContextMenu() {
+  rootContextMenu.hidden = true;
+  contextRootId = null;
+}
+
 async function createAssignment(root) {
   const value = prompt(`Name the assignment for ${root.name}:`);
   if (value === null) return;
@@ -140,6 +160,69 @@ async function createAssignment(root) {
   expandedRootIds.add(root.id);
   selectAssignment(data.id);
 }
+
+async function deleteRoot(root) {
+  const confirmed = confirm(
+    `Delete ${root.name} and everything underneath it?\n\nThis includes its Log, assignments, tasks, and log entries. This cannot be undone.`
+  );
+  if (!confirmed) return;
+
+  const { error } = await db
+    .from('bm_nodes')
+    .delete()
+    .eq('id', root.id);
+
+  if (error) {
+    alert(`The family could not be deleted: ${error.message}`);
+    return;
+  }
+
+  const removedAssignmentIds = new Set(
+    assignments
+      .filter(assignment => assignment.parent_id === root.id)
+      .map(assignment => assignment.id)
+  );
+  roots = roots.filter(item => item.id !== root.id);
+  assignments = assignments.filter(assignment => assignment.parent_id !== root.id);
+  tasks = tasks.filter(task => !removedAssignmentIds.has(task.parent_id));
+  expandedRootIds.delete(root.id);
+
+  if (selectedRootId === root.id) {
+    selectedRootId = null;
+    selectedAssignmentId = null;
+    logView.hidden = true;
+    assignmentView.hidden = true;
+    welcome.hidden = false;
+  }
+
+  renderTree();
+}
+
+addAssignmentAction.onclick = () => {
+  const root = roots.find(item => item.id === contextRootId);
+  closeRootContextMenu();
+  if (root) createAssignment(root);
+};
+
+deleteRootAction.onclick = () => {
+  const root = roots.find(item => item.id === contextRootId);
+  closeRootContextMenu();
+  if (root) deleteRoot(root);
+};
+
+document.addEventListener('click', event => {
+  if (!rootContextMenu.hidden && !rootContextMenu.contains(event.target)) {
+    closeRootContextMenu();
+  }
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !rootContextMenu.hidden) {
+    closeRootContextMenu();
+  }
+});
+
+window.addEventListener('blur', closeRootContextMenu);
 
 async function loadRoots() {
   if (!db) {
