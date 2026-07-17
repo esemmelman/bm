@@ -1,5 +1,7 @@
 const SUPABASE_URL = 'https://fgomaujsdblpzxhnnqrg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_JOUqLZDnfGu_yCa6k6FVDQ_AYwpr72i';
+const APP_VERSION = '1.2.0';
+const APP_RELEASE_DESCRIPTION = 'Assignments, tasks, and family deletion';
 
 const clientConfigured = !SUPABASE_URL.startsWith('YOUR_') && !SUPABASE_PUBLISHABLE_KEY.startsWith('YOUR_');
 const db = clientConfigured && window.supabase
@@ -7,6 +9,7 @@ const db = clientConfigured && window.supabase
   : null;
 
 const connectionStatus = document.getElementById('connectionStatus');
+const appVersion = document.getElementById('appVersion');
 const newRootButton = document.getElementById('newRootButton');
 const rootForm = document.getElementById('rootForm');
 const rootName = document.getElementById('rootName');
@@ -40,6 +43,8 @@ let selectedRootId = null;
 let selectedAssignmentId = null;
 let contextRootId = null;
 const expandedRootIds = new Set();
+
+appVersion.textContent = `v${APP_VERSION} · ${APP_RELEASE_DESCRIPTION}`;
 
 function setStatus(message, state) {
   connectionStatus.textContent = message;

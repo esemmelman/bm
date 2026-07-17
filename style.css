@@ -44,6 +44,8 @@ h1 { margin-bottom: 0; font-family: Georgia, serif; font-size: clamp(1.65rem, 3v
 h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: clamp(1.45rem, 2.4vw, 2rem); }
 .eyebrow { margin-bottom: 4px; color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .app-header .eyebrow { color: #b9d2ca; }
+.header-meta { display: grid; justify-items: end; gap: 7px; }
+.version-label { color: #b9d2ca; font-size: .72rem; text-align: right; }
 
 .status { padding: 7px 11px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; font-size: .78rem; white-space: nowrap; }
 .status[data-state="ready"] { background: rgba(67, 160, 128, .2); }
@@ -130,6 +132,7 @@ textarea { display: block; min-height: 120px; resize: vertical; padding: 13px; l
 @media (max-width: 720px) {
   .app-header { min-height: 78px; padding: 14px 18px; }
   .app-header .eyebrow { display: none; }
+  .version-label { max-width: 175px; font-size: .65rem; }
   .app-shell { min-height: calc(100vh - 78px); grid-template-columns: 1fr; }
   .tree-panel { padding: 20px 16px; border-right: 0; border-bottom: 1px solid var(--line); }
   .content-panel { padding: 28px 18px 50px; }
