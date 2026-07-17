@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://fgomaujsdblpzxhnnqrg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_JOUqLZDnfGu_yCa6k6FVDQ_AYwpr72i';
-const APP_VERSION = '1.3.0';
-const APP_RELEASE_DESCRIPTION = 'Contact information';
+const APP_VERSION = '1.3.1';
+const APP_RELEASE_DESCRIPTION = 'Android long-press fix';
 
 const clientConfigured = !SUPABASE_URL.startsWith('YOUR_') && !SUPABASE_PUBLISHABLE_KEY.startsWith('YOUR_');
 const db = clientConfigured && window.supabase
