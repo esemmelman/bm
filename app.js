@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://fgomaujsdblpzxhnnqrg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_JOUqLZDnfGu_yCa6k6FVDQ_AYwpr72i';
-const APP_VERSION = '1.3.1';
-const APP_RELEASE_DESCRIPTION = 'Android long-press fix';
+const APP_VERSION = '1.3.2';
+const APP_RELEASE_DESCRIPTION = 'Alphabetized root items';
 
 const clientConfigured = !SUPABASE_URL.startsWith('YOUR_') && !SUPABASE_PUBLISHABLE_KEY.startsWith('YOUR_');
 const db = clientConfigured && window.supabase
@@ -116,7 +116,8 @@ function renderTree() {
     logButton.hidden = !expandedRootIds.has(root.id);
     logButton.onclick = () => selectRoot(root.id);
 
-    group.append(rootButton, logButton);
+    const childButtons = [logButton];
+    group.append(rootButton);
 
     const contact = contacts.find(item => item.parent_id === root.id);
     if (contact) {
@@ -127,7 +128,7 @@ function renderTree() {
       contactButton.hidden = !expandedRootIds.has(root.id);
       contactButton.setAttribute('aria-current', String(contact.id === selectedContactId));
       contactButton.onclick = () => selectContact(contact.id);
-      group.append(contactButton);
+      childButtons.push(contactButton);
     }
 
     assignments
@@ -140,8 +141,12 @@ function renderTree() {
         assignmentButton.hidden = !expandedRootIds.has(root.id);
         assignmentButton.setAttribute('aria-current', String(assignment.id === selectedAssignmentId));
         assignmentButton.onclick = () => selectAssignment(assignment.id);
-        group.append(assignmentButton);
+        childButtons.push(assignmentButton);
       });
+
+    childButtons
+      .sort((first, second) => first.textContent.localeCompare(second.textContent, undefined, { sensitivity: 'base' }))
+      .forEach(button => group.append(button));
     tree.append(group);
   });
 }
