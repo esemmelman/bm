@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>B'nai Mitzvah Tracker</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1.3.0">
 </head>
 <body>
   <header class="app-header">
@@ -14,7 +14,7 @@
     </div>
     <div class="header-meta">
       <span id="connectionStatus" class="status" data-state="loading">Connecting...</span>
-      <span id="appVersion" class="version-label"></span>
+      <span id="appVersion" class="version-label">v1.3.0 · Contact information</span>
     </div>
   </header>
 
@@ -94,6 +94,24 @@
         </div>
         <div id="tasks" class="tasks"></div>
       </div>
+
+      <div id="contactView" hidden>
+        <div class="content-heading">
+          <div>
+            <p class="eyebrow">Contact</p>
+            <h2 id="contactTitle"></h2>
+          </div>
+        </div>
+
+        <form id="contactForm" class="contact-form">
+          <label for="contactInfo">Contact information</label>
+          <textarea id="contactInfo" rows="12" maxlength="10000" placeholder="Enter names, phone numbers, email addresses, notes, or any other contact information..."></textarea>
+          <div class="log-actions">
+            <span id="contactFormMessage" role="status"></span>
+            <button type="submit">Save contact</button>
+          </div>
+        </form>
+      </div>
     </section>
   </main>
 
@@ -103,6 +121,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=1.3.0"></script>
 </body>
 </html>

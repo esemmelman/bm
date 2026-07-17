@@ -94,6 +94,7 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: clamp(1.45rem, 2.
 .tree-child { position: relative; margin-left: 22px; padding-left: 31px; font-weight: 600; color: var(--muted); }
 .tree-child::before { content: ""; position: absolute; left: 8px; top: -8px; width: 13px; height: 28px; border-left: 1px solid #aaa69d; border-bottom: 1px solid #aaa69d; border-radius: 0 0 0 8px; }
 .assignment-node { color: var(--accent-dark); }
+.contact-node { color: var(--accent-dark); }
 .empty-note { color: var(--muted); line-height: 1.55; }
 
 .context-menu { position: fixed; z-index: 1000; width: 180px; padding: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); box-shadow: 0 14px 35px rgba(36, 49, 45, .2); }
@@ -105,11 +106,15 @@ h2 { margin-bottom: 0; font-family: Georgia, serif; font-size: clamp(1.45rem, 2.
 .welcome { max-width: 650px; margin-top: 12vh; }
 .welcome h2 { margin-bottom: 14px; font-size: clamp(2rem, 5vw, 4.2rem); line-height: 1.02; }
 .welcome > p:last-child { color: var(--muted); font-size: 1.08rem; }
-#logView, #assignmentView { max-width: 880px; margin: 0 auto; }
+#logView, #assignmentView, #contactView { max-width: 880px; margin: 0 auto; }
 .content-heading { margin-bottom: 28px; }
 .section-note { margin: 7px 0 0; color: var(--muted); }
 .log-form { padding: clamp(18px, 3vw, 28px); }
-.task-form { padding: clamp(18px, 3vw, 28px); }
+.task-form, .contact-form { padding: clamp(18px, 3vw, 28px); }
+.contact-form { border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: var(--shadow); }
+.contact-form label { display: block; margin-bottom: 8px; font-weight: 750; }
+.contact-form button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 750; }
+#contactFormMessage { color: var(--muted); font-size: .88rem; }
 .task-form .form-row { align-items: stretch; }
 .task-form .form-row button { min-width: 105px; }
 #taskFormMessage { display: block; min-height: 1.2em; margin-top: 10px; color: var(--muted); font-size: .88rem; }
